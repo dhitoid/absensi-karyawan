@@ -18,23 +18,34 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxn739qf5eGd2ZEn-zhvMDR
 
 function login() {
   const email = document.getElementById("email").value;
+  document.getElementById("msg").innerText = "Loading...";
 
   fetch(API_URL, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({
       action: "login",
       email: email
     })
   })
-  .then(r => r.json())
-  .then(d => {
+  .then(res => res.text())
+  .then(text => {
+    console.log(text);
+    const d = JSON.parse(text);
+
     if (d.success) {
       localStorage.setItem("user_id", d.user_id);
       localStorage.setItem("nama", d.nama);
-      window.location.href = "absen.html";
+      location.href = "absen.html";
     } else {
       document.getElementById("msg").innerText = d.message;
     }
+  })
+  .catch(err => {
+    document.getElementById("msg").innerText = "ERROR API";
+    console.error(err);
   });
 }
 </script>
