@@ -2,39 +2,38 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Absen</title>
+<title>Login Absensi</title>
 </head>
 <body>
 
-<h2>ABSEN KARYAWAN</h2>
-<button onclick="absen()">ABSEN SEKARANG</button>
+<h2>LOGIN</h2>
+<input id="email" placeholder="Email" />
+<br><br>
+<button onclick="login()">LOGIN</button>
 <p id="msg"></p>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbzeJsONb_64Sf1sGtm7ndSUHC7zo6j6x6wt3MiEcn8v0bi2aycYWfx4V_ztTbiVOJ4/exec";
-const USER_ID = 1;
 
-function absen() {
-  if (!navigator.geolocation) {
-    alert("GPS tidak didukung");
-    return;
-  }
+function login() {
+  const email = document.getElementById("email").value;
 
-  navigator.geolocation.getCurrentPosition(pos => {
-    fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        user_id: USER_ID,
-        lat: pos.coords.latitude,
-        lng: pos.coords.longitude
-      })
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "login",
+      email: email
     })
-    .then(r => r.json())
-    .then(d => {
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.success) {
+      localStorage.setItem("user_id", d.user_id);
+      localStorage.setItem("nama", d.nama);
+      window.location.href = "absen.html";
+    } else {
       document.getElementById("msg").innerText = d.message;
-    });
-  }, () => {
-    alert("Aktifkan GPS");
+    }
   });
 }
 </script>
